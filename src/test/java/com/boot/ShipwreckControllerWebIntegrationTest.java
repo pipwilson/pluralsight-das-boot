@@ -20,23 +20,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class ShipwreckControllerWebIntegrationTest {
-	
+    
 
-	@Test
-	public void testListAll() throws IOException {
+    @Test
+    public void testListAll() throws IOException {
+        
+        TestRestTemplate restTemplate = new TestRestTemplate();
+        ResponseEntity<String> response = restTemplate.getForEntity("http://localhost:8080/api/v1/shipwrecks", String.class);
 
-		
-		TestRestTemplate restTemplate = new TestRestTemplate();
-		ResponseEntity<String> response = restTemplate.getForEntity("http://localhost:8080/api/v1/shipwrecks", String.class);
+        assertThat( response.getStatusCode() , equalTo(HttpStatus.OK));
 
-	    assertThat( response.getStatusCode() , equalTo(HttpStatus.OK));
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode responseJson = objectMapper.readTree(response.getBody());
 
-	    ObjectMapper objectMapper = new ObjectMapper();
-	    JsonNode responseJson = objectMapper.readTree(response.getBody());
-
-	    assertThat( responseJson.isMissingNode() , Matchers.is(false) );
-	    assertThat( responseJson.toString() , equalTo("[]") );
-		
-	}
+        assertThat( responseJson.isMissingNode() , Matchers.is(false) );
+        assertThat( responseJson.toString() , equalTo("[]") );
+        
+    }
 
 }
